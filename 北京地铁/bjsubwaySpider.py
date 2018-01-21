@@ -58,8 +58,8 @@ def get_one_line_time(url):
         tbody = bsobj.findAll("tbody")    #查找到显示线路信息的表格
 
     global number
-    global station_names   #326
-
+    global station_names
+    
     ###########处理1号线#############
     trs = tbody[0].findAll("tr")        #把所有行放入数组trs[]
     stations = []

@@ -1,0 +1,12 @@
+[INFO  - 2018-01-20T02:38:19.936Z] GhostDriver - Main - running on port 63798
+[INFO  - 2018-01-20T02:38:22.677Z] Session [fb9b1b90-fd8a-11e7-bf95-cf347621f50a] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2018-01-20T02:38:22.677Z] Session [fb9b1b90-fd8a-11e7-bf95-cf347621f50a] - page.customHeaders:  - {}
+[INFO  - 2018-01-20T02:38:22.677Z] Session [fb9b1b90-fd8a-11e7-bf95-cf347621f50a] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2018-01-20T02:38:22.677Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: fb9b1b90-fd8a-11e7-bf95-cf347621f50a
+[ERROR - 2018-01-20T02:38:22.941Z] Session [fb9b1b90-fd8a-11e7-bf95-cf347621f50a] - page.onError - msg: TypeError: undefined is not a constructor (evaluating 'window.attachEvent("onload", correctPNG)')
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2018-01-20T02:38:22.942Z] Session [fb9b1b90-fd8a-11e7-bf95-cf347621f50a] - page.onError - stack:
+  global code (http://www.bjta.gov.cn/tsfwzt/qyml/394778.htm:43)
+
+  phantomjs://platform/console++.js:263 in error

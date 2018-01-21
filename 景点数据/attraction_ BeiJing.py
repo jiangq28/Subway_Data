@@ -24,11 +24,9 @@ def read_csv(filename):  #读取 旅游局等级景点名录 .csv。转换为列
     list_jingdian = []
     with open(filename,'r',encoding='gbk') as csvfile:
         reader = csv.DictReader(csvfile)
-        temp = 1
         for row in reader:
             d={}
-            d["ID"] = temp
-            temp +=1
+            d["序号"] = row["序号"]
             d["景区名称"]= row['景区名称']
             if row['等级'] =='5A':
                 d["等级"] = 5
@@ -77,16 +75,15 @@ def get_roundsearch(query,lat,lng,radius,ak_KEY):  #检索 经纬度（lat,lng)�
             subway_list.append(d)
     except:
         traceback.print_exc()
-        print(root)
+        print("最近地铁获取失败")
        
-
     return [subway_list]
 
 def distance(way,origin_lat,origin_lng,destination_lat,destination_lng):  #返回起终点（origin_lat,origin_lng),(destination_lat,destination_lng之间的步行距离。way 可选择drving(驾车)，riding（骑行），walking（步行）
 
     url = 'http://api.map.baidu.com/routematrix/v2/'+str(way)+'?output=json&origins='+str(origin_lat)+','+str(origin_lng) +'&destinations='+ str(destination_lat)+','+str(destination_lng)+ '&ak=' + ak_KEY   
     json_obj2 = request.urlopen(url)
-    data = json.load(json_obj2)  #json转换为字典dic
+    data = json.loads(json_obj2.read().decode("utf-8"))  #json转换为字典dic
    # print(url)
      
     item2 = data["result"][0]
@@ -110,48 +107,34 @@ if __name__ == '__main__':
     #print (list_jingdian)
 
     city_name = '北京'  #在此修改景点所在城市名
-    city_id = '110100' #在此修改省份城市编码
-    region ={'东城区':110101,
-             '西城区':110102,
-　　     　　'朝阳区':110105,
-　　     　　'丰台区':110106,
-　　     　　'石景山区':110107,
-　　    　　 '海淀区':110108,
-　　     　　'门头沟区':110109,
-　　     　　'房山区':110111,
-　　     　　'通州区':110112,
-　　     　　'顺义区':110113,
-　　     　　'昌平区':110114,
-　　    　　 '大兴区':110115,
-　　     　　'怀柔区':110116,
-　　     　　'平谷区':110117,
-             '密云区':110118,
-             '延庆区':110119
-             }
+    city_id = '1100' #在此修改省份城市编码
 
     doc = codecs.open(outfile_name,'w','utf-8')
     count = 1
-    no_find_jingdian = []#用于存放 未检索到的景点名
+   
+    outfile2='北京市景点(无).csv'
+    header = ['序号','景区名称','等级','地址']
+    #打开文件，设置表头
+    with open(outfile2, 'w') as csvfile:       
+        writer = csv.DictWriter(csvfile, fieldnames=header)
+        writer.writeheader()
     for jd in list_jingdian:
         jingdian_name = jd["景区名称"]
 
         url = 'http://api.map.baidu.com/place/v2/search?query='+ quote(jingdian_name)+ '&region='+ quote(city_name) +'&city_limit=true&page_size=1&page_num=0&scope=2&output=json&ak='+ak_KEY
-        
+                
         json_obj = request.urlopen(url)
-        data = json.load(json_obj)  #json转换为字典dic
+        data = json.loads(json_obj.read().decode("utf-8"))  #json转换为字典dic
     
         print(jingdian_name)
         time.sleep(2) # 休眠1秒
         jingdian = {} #一个市的景点的dict
         temp = 0
        
-        if data["results"] == []:    #如果百度地图 没有检索到此景点，在程序末尾会打印“检索失败的景点”
-            jingdian["id"] =  str(city_id)+ "{:0>3d}".format(count)
-            count += 1
-            jingdian["name"] = jd['景区名称']
-            jingdian["level"] = jd['等级']
-            jingdian["address"] = jd['地址']
-            no_find_jingdian.append(jingdian["name"])
+        if data["results"] == []:    #如果百度地图没有检索到此景点，存入新的文件等待第二次处理
+            with open(outfile2, 'a') as csvfile:
+                writer = csv.DictWriter(csvfile,header)
+                writer.writerow(jd)
         else:
             item = data["results"][0]
             # print("{:0>4d}".format(count))
@@ -164,15 +147,12 @@ if __name__ == '__main__':
             jingdian["lat"] = item["location"]["lat"]
             jingdian["lng"] = item["location"]["lng"]
             jingdian["uid"] = item["uid"]
-            print()
         
             if "detail_info" in item and 'tag' in  item["detail_info"]: #因为有些景点无tag，所以要先判断。
                jingdian["tag"] =  item["detail_info"]["tag"]
             else:
                jingdian["tag"] = '无'
-
            
-
             #**********以下为 圆形搜索 景点附近5000米内 地铁站*
             query = '地铁站'
             radius = 2000   #搜索半径为1000米
@@ -184,14 +164,8 @@ if __name__ == '__main__':
             #jingdian = json.dumps(jingdian,ensure_ascii=False,indent = 2)  #有缩进，Jason更好看
 
             doc.write(jingdian)
-            doc.write('\n')
-         
-       
-    doc.write("The following spot has no result:\n")
-    for i in no_find_jingdian: #末尾写入
-        doc.write(i)
-        doc.write('\n')
+            doc.write('\n')  
+
     doc.close()
-    print (len(no_find_jingdian))
     end_time = time.time()
     print ("spending time %.2fs" % (end_time - start_time))

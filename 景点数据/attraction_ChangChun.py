@@ -7,8 +7,6 @@
 import csv
 import json
 import time
-import json
-import urllib
 from urllib import request
 import sys
 from urllib.parse import quote
@@ -76,16 +74,16 @@ def get_roundsearch(query,lat,lng,radius,ak_KEY):  #检索 经纬度（lat,lng)�
             subway_list.append(d)
     except:
         traceback.print_exc()
-        print(root)
+        print("最近地铁获取失败")
        
-
     return [subway_list]
 
 def distance(way,origin_lat,origin_lng,destination_lat,destination_lng):  #返回起终点（origin_lat,origin_lng),(destination_lat,destination_lng之间的步行距离。way 可选择drving(驾车)，riding（骑行），walking（步行）
 
     url = 'http://api.map.baidu.com/routematrix/v2/'+str(way)+'?output=json&origins='+str(origin_lat)+','+str(origin_lng) +'&destinations='+ str(destination_lat)+','+str(destination_lng)+ '&ak=' + ak_KEY   
     json_obj2 = request.urlopen(url)
-    data = json.load(json_obj2)  #json转换为字典dic
+    data = json.loads(json_obj2.read().decode("utf-8"))  #json转换为字典dic
+
    # print(url)
      
     item2 = data["result"][0]
@@ -109,7 +107,7 @@ if __name__ == '__main__':
     #print (list_jingdian)
 
     city_name = '长春'  #在此修改景点所在城市名
-    city_id = '220100' #在此修改省份城市编码
+    city_id = '2201' #在此修改省份城市编码
 
 
     doc = codecs.open(outfile_name,'w','utf-8')
@@ -126,9 +124,10 @@ if __name__ == '__main__':
         jingdian_name = jd["景区名称"]
 
         url = 'http://api.map.baidu.com/place/v2/search?query='+ quote(jingdian_name)+ '&region='+ quote(city_name) +'&city_limit=true&page_size=1&page_num=0&scope=2&output=json&ak='+ak_KEY
-        
+    
         json_obj = request.urlopen(url)
-        data = json.load(json_obj)  #json转换为字典dic
+        data = json.loads(json_obj.read().decode("utf-8"))#json转换为字典dic
+       
     
         print(jingdian_name)
         time.sleep(2) # 休眠1秒
